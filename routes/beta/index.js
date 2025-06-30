@@ -11,4 +11,13 @@ router.get('/init', async (req, res) => {
   }
 });
 
+router.post('/init', async (req, res) => {
+  try {
+    await betaServices.initSaveBetaEntity({ payload: req.body });
+    res.sendStatus(200);
+  } catch (err) {
+    res.status(500).json({ success: false });
+  }
+});
+
 module.exports = router;

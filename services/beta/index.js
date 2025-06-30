@@ -6,4 +6,10 @@ const initBetaEntity = async () => {
   return queryResult;
 };
 
-module.exports = { initBetaEntity };
+const initSaveBetaEntity = async ({ payload }) => {
+  await repositoryBeta.saveDataInitBetaEntity({ values: payload });
+  console.log('Save success');
+  return;
+};
+
+module.exports = { initBetaEntity, initSaveBetaEntity };
