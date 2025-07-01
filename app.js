@@ -63,5 +63,5 @@ initConnection()
     });
   })
   .catch((err) => {
-    console.log('Error with DB connection -> ', err);
+    console.log('Error launching app -> ', err);
   });
