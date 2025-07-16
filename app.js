@@ -16,7 +16,7 @@ initConnection()
     if (process.env.NODE_ENV === 'development') {
       app.use(
         cors({
-          origin: 'http://localhost:3000',
+          origin: 'http://localhost:3000', //5173
           credentials: true,
         })
       );

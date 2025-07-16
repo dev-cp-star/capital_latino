@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 
 module.exports = (app) => {
-  app.use('/api/beta', require('./beta'));
+  app.use('/api/user', require('./users'));
 
   const clientPath = path.join(__dirname, '..', 'client');
 
@@ -17,7 +17,7 @@ module.exports = (app) => {
     });
   } else {
     app.use((req, res) => {
-      res.status(404).json({ success: false });
+      res.status(404).json({ success: false, msg: 'API not found' });
     });
   }
 };
