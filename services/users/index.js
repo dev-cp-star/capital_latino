@@ -21,19 +21,19 @@ const login = async ({ payload }) => {
   const [rows, fields] = await userRepository.findByEmail(email);
 
   if (!rows[0]) {
-    return { ok: false, tkn: '' };
+    return null;
   }
 
   const password = payload.password;
   const [salt, hash] = rows[0].password?.split('$');
 
   if (hash !== crypto.createHmac('sha512', salt).update(password).digest('base64')) {
-    return { ok: false, tkn: '' };
+    return null;
   }
 
   const token = jwt.sign({ id: rows[0].id }, process.env.JWT_SECRET_KEY);
 
-  return { ok: true, tkn: token };
+  return token;
 };
 
 module.exports = { createUser, login };

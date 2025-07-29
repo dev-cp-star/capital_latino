@@ -11,13 +11,13 @@ module.exports = (app) => {
 
     app.use((req, res) => {
       if (req.method !== 'GET') {
-        return res.status(404).json({ success: false });
+        return res.status(404).json({ msg: 'Resource not found' });
       }
       res.type('html').sendFile(path.join(clientPath, 'index.html'));
     });
   } else {
     app.use((req, res) => {
-      res.status(404).json({ success: false, msg: 'API not found' });
+      res.status(404).json({ msg: 'Resource not found' });
     });
   }
 };

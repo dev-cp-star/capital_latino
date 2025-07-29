@@ -3,9 +3,7 @@ const { validationResult } = require('express-validator');
 const requestValidator = (req, res, next) => {
   const result = validationResult(req);
   if (!result.isEmpty()) {
-    return res
-      .status(400)
-      .json({ success: false, msg: 'Missing data', missingData: result.mapped() });
+    return res.status(400).json({ msg: 'Missing data', missingData: result.mapped() });
   }
   next();
 };
