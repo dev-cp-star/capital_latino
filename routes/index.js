@@ -3,6 +3,7 @@ const path = require('path');
 
 module.exports = (app) => {
   app.use('/api/user', require('./users'));
+  app.use('/api/form_options', require('./form_options'));
 
   const clientPath = path.join(__dirname, '..', 'client');
 

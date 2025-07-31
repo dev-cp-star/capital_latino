@@ -1,7 +1,7 @@
 const connection = require('../connection').getConnection();
 
 const create = (credentials) =>
-  connection.query('INSERT INTO users(email, password) VALUES (?, ?)', [
+  connection.query('INSERT INTO users (email, password) VALUES (?, ?)', [
     credentials.email,
     credentials.password,
   ]);

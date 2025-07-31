@@ -6,11 +6,15 @@ const requestValidator = require('../../middlewares/express-validator');
 
 router.post('/create', [
   body('email')
+    .isString()
+    .withMessage('Email must be text')
     .isEmail()
     .withMessage('Invalid Email')
     .isLength({ max: 100 })
     .withMessage('Email too large. Max 100 characters'),
   body('password')
+    .isString()
+    .withMessage('Password must be text')
     .isLength({ min: 6, max: 25 })
     .withMessage('Password must be between 6 and 25 characters'),
   requestValidator,
@@ -26,11 +30,15 @@ router.post('/create', [
 
 router.post('/auth', [
   body('email')
+    .isString()
+    .withMessage('Email must be a string')
     .isEmail()
     .withMessage('Invalid Email')
     .isLength({ max: 100 })
     .withMessage('Email too large. Max 100 characters'),
   body('password')
+    .isString()
+    .withMessage('Password must be text')
     .isLength({ min: 6, max: 25 })
     .withMessage('Password must be between 6 and 25 characters'),
   requestValidator,
