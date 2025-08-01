@@ -1,3 +1,5 @@
+const { FormNotAvailable } = require('../../errors/form-options');
+
 const connection = require('../connection').getConnection();
 
 const insertNewForm = ({ formName }) =>
@@ -26,4 +28,16 @@ const insertNewFields = ({ formId, fields }) => {
   return connection.execute(baseQuery + phQ.join(', '), phV);
 };
 
-module.exports = { insertNewForm, insertNewFields };
+const fieldsAndValuesByForm = async ({ formId }) => {
+  const q =
+    'SELECT t2.name, t2.fieldValues FROM form as t1 INNER JOIN field as t2 ON t1.id=t2.form_field AND t2.active=true where t1.id=? AND t1.active=true';
+
+  const [r, metadata] = await connection.execute(q, [formId]);
+  if (r.length === 0) {
+    throw new FormNotAvailable('We could not find the form data');
+  }
+
+  return r;
+};
+
+module.exports = { insertNewForm, insertNewFields, fieldsAndValuesByForm };
