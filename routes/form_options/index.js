@@ -23,42 +23,20 @@ router.post('/form', [
 
 router.post('/fields', [
   body('formId').isNumeric().withMessage('FormId is required'),
-  body('fields').isArray({ min: 1 }).withMessage('fields must have at least one new field'),
+  body('fields').isArray({ min: 1 }).withMessage('fields must be a non-empty array'),
   body('fields.*.name')
     .isString()
-    .withMessage('Some fieldName is not text')
+    .withMessage('FieldName is not text')
     .notEmpty()
-    .withMessage('Some fieldName is empty'),
+    .withMessage('FieldName is empty'),
+  body('fields.*.fieldValues')
+    .isArray({ min: 1 })
+    .withMessage('fieldValues must be a non-empty array'),
   requestValidator,
   async (req, res) => {
     try {
       await formOptionsService.createFields({ payload: req.body });
       res.status(200).json({ msg: 'Field(s) successfully created' });
-    } catch (err) {
-      res.status(500).json({ msg: 'Unexpected error' });
-    }
-  },
-]);
-
-router.post('/values', [
-  body('fieldId').isNumeric().withMessage('fieldId is required'),
-  body('values').isArray({ min: 1 }).withMessage('values must have at least one new value'),
-  body('values.*.value')
-    .optional()
-    .isString()
-    .withMessage('Some nested value key is not text')
-    .notEmpty()
-    .withMessage('Some nested value key is empty'),
-  body('values.*.inner_text')
-    .isString()
-    .withMessage('Some nested inner_text key is not text')
-    .notEmpty()
-    .withMessage('Some nested inner_text key is empty'),
-  requestValidator,
-  async (req, res) => {
-    try {
-      await formOptionsService.createValues({ payload: req.body });
-      res.status(200).json({ msg: 'Value(s) successfully created' });
     } catch (err) {
       res.status(500).json({ msg: 'Unexpected error' });
     }

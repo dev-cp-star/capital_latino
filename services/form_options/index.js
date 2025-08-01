@@ -11,9 +11,4 @@ const createFields = async ({ payload }) => {
   await formOptionsRepository.insertNewFields({ formId, fields });
 };
 
-const createValues = async ({ payload }) => {
-  const { fieldId, values } = payload;
-  await formOptionsRepository.insertNewValues({ fieldId, values });
-};
-
-module.exports = { createForm, createFields, createValues };
+module.exports = { createForm, createFields };
