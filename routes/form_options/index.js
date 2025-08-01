@@ -32,6 +32,11 @@ router.post('/fields', [
   body('fields.*.fieldValues')
     .isArray({ min: 1 })
     .withMessage('fieldValues must be a non-empty array'),
+  body('fields.*.fieldValues.*.text')
+    .isString()
+    .withMessage('Must be text')
+    .notEmpty()
+    .withMessage('Must no be empty'),
   requestValidator,
   async (req, res) => {
     try {
