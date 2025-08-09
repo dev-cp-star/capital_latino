@@ -1,16 +1,19 @@
-const crypto = require('crypto');
-const jwt = require('jsonwebtoken');
+const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
 
-const userRepository = require('../../repository/users');
+const userRepository = require("../../repository/users");
 
 const createUser = async ({ payload }) => {
   const email = payload.email;
   const password = payload.password;
 
-  const salt = crypto.randomBytes(16).toString('base64');
-  const hash = crypto.createHmac('sha512', salt).update(password).digest('base64');
+  const salt = crypto.randomBytes(16).toString("base64");
+  const hash = crypto
+    .createHmac("sha512", salt)
+    .update(password)
+    .digest("base64");
 
-  const newPassword = salt + '$' + hash;
+  const newPassword = salt + "$" + hash;
 
   await userRepository.create({ email, password: newPassword });
 };
@@ -18,20 +21,22 @@ const createUser = async ({ payload }) => {
 const login = async ({ payload }) => {
   const email = payload.email;
 
-  const [rows, fields] = await userRepository.findByEmail(email);
+  const user = await userRepository.findByEmail(email);
 
-  if (!rows[0]) {
+  if (!user) {
     return null;
   }
 
   const password = payload.password;
-  const [salt, hash] = rows[0].password?.split('$');
+  const [salt, hash] = user.password?.split("$");
 
-  if (hash !== crypto.createHmac('sha512', salt).update(password).digest('base64')) {
+  if (
+    hash !== crypto.createHmac("sha512", salt).update(password).digest("base64")
+  ) {
     return null;
   }
 
-  const token = jwt.sign({ id: rows[0].id }, process.env.JWT_SECRET_KEY);
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY);
 
   return token;
 };

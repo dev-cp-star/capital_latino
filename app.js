@@ -1,28 +1,28 @@
-const { initConnection } = require('./repository/connection');
+const { initConnection } = require("./db/connection");
 
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config();
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
 }
 
 initConnection()
   .then(() => {
-    const express = require('express');
+    const express = require("express");
 
     const app = express();
-    const cors = require('cors');
-    const helmet = require('helmet');
-    const logger = require('morgan');
+    const cors = require("cors");
+    const helmet = require("helmet");
+    const logger = require("morgan");
 
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === "development") {
       app.use(
         cors({
-          origin: 'http://localhost:5173', //5173
+          origin: "http://localhost:5173", //5173
           credentials: true,
         })
       );
     }
 
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === "production") {
       app.use(
         helmet({
           contentSecurityPolicy: {
@@ -30,7 +30,7 @@ initConnection()
               defaultSrc: ["'self'"],
               scriptSrc: ["'self'"],
               styleSrc: ["'self'", "'unsafe-inline'"],
-              imgSrc: ["'self'", 'data:'],
+              imgSrc: ["'self'", "data:"],
               connectSrc: ["'self'"],
               fontSrc: ["'self'"],
               objectSrc: ["'none'"],
@@ -39,29 +39,29 @@ initConnection()
           },
           crossOriginEmbedderPolicy: false,
           crossOriginResourcePolicy: {
-            policy: 'cross-origin',
+            policy: "cross-origin",
           },
           crossOriginOpenerPolicy: {
-            policy: 'unsafe-none',
+            policy: "unsafe-none",
           },
         })
       );
     }
 
-    app.use(logger('dev'));
+    app.use(logger("dev"));
 
     app.use(express.json());
     app.use(express.urlencoded({ extended: false }));
 
-    const router = require('./routes');
+    const router = require("./routes");
 
     router(app);
 
     const PORT_APP = process.env.PORT || 3000;
     app.listen(PORT_APP, () => {
-      console.log('Server Running');
+      console.log("Server Running");
     });
   })
   .catch((err) => {
-    console.log('Error launching app -> ', err);
+    console.log("Error launching app -> ", err);
   });
