@@ -1,47 +1,57 @@
 const { FormNotAvailable } = require("../../errors/form-options");
 
 const connection = require("../../db/connection").getConnection();
+const { models } = connection;
+const { form } = models;
 
-const insertNewForm = ({ formName }) =>
-  connection.execute("INSERT INTO form (name) VALUES (?)", [formName]);
-
-const insertNewFields = ({ formId, fields }) => {
-  const baseQuery = "INSERT INTO field (form_field, name, fieldValues) VALUES ";
-  const { phQ, phV } = fields.reduce(
-    (o, i) => ({
-      phQ: [...o.phQ, "(?,?,?)"],
-      phV: [
-        ...o.phV,
-        formId,
-        i.name,
-        JSON.stringify(
-          i.fieldValues.map((i) => ({
-            ...i,
-            value: !i.value ? i.text : i.value,
-            active: true,
-          }))
-        ),
-      ],
-    }),
-    {
-      phQ: [],
-      phV: [],
-    }
-  );
-
-  return connection.execute(baseQuery + phQ.join(", "), phV);
-};
+const insertNewForm = ({ formData }) => new form(formData).save();
 
 const fieldsAndValuesByForm = async ({ formId }) => {
-  const q =
-    "SELECT t2.name, t2.fieldValues FROM form as t1 INNER JOIN field as t2 ON t1.id=t2.form_field AND t2.active=true where t1.id=? AND t1.active=true";
+  const r = await form.aggregate([
+    [
+      {
+        $match: {
+          formId: parseInt(formId),
+          active: true,
+        },
+      },
+      {
+        $limit: 1,
+      },
+      {
+        $project: {
+          fields: {
+            $map: {
+              input: {
+                $filter: {
+                  input: "$fields",
+                  as: "f",
+                  cond: { $eq: ["$$f.active", true] },
+                },
+              },
+              as: "f",
+              in: {
+                active: "$$f.active",
+                values: {
+                  $filter: {
+                    input: "$$f.values",
+                    as: "v",
+                    cond: { $eq: ["$$v.active", true] },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    ],
+  ]);
 
-  const [r, metadata] = await connection.execute(q, [formId]);
   if (r.length === 0) {
-    throw new FormNotAvailable("We could not find the form data");
+    throw new FormNotAvailable("We could not find the form");
   }
 
-  return r;
+  return r[0];
 };
 
-module.exports = { insertNewForm, insertNewFields, fieldsAndValuesByForm };
+module.exports = { insertNewForm, fieldsAndValuesByForm };
