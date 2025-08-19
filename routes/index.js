@@ -11,7 +11,7 @@ module.exports = (app) => {
     app.use(express.static(clientPath));
 
     app.use((req, res) => {
-      if (req.method !== 'GET') {
+      if (req.method !== 'GET' || req.url.includes('api')) {
         return res.status(404).json({ msg: 'Resource not found' });
       }
       res.type('html').sendFile(path.join(clientPath, 'index.html'));
