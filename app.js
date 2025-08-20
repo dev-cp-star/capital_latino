@@ -27,14 +27,16 @@ initConnection()
         helmet({
           contentSecurityPolicy: {
             directives: {
-              defaultSrc: ["'self'"],
-              scriptSrc: ["'self'"],
-              styleSrc: ["'self'", "'unsafe-inline'"],
-              imgSrc: ["'self'", "data:"],
-              connectSrc: ["'self'"],
-              fontSrc: ["'self'"],
-              objectSrc: ["'none'"],
-              upgradeInsecureRequests: [],
+              ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+              defaultSrc: [
+                "'self'",
+                "blob:",
+                "*.mongodb.com",
+                "*.google.com",
+                "*.googleapis.com",
+                "calendly.com",
+                "*.calendly.com",
+              ],
             },
           },
           crossOriginEmbedderPolicy: false,
