@@ -27,7 +27,6 @@ initConnection()
         helmet({
           contentSecurityPolicy: {
             directives: {
-              ...helmet.contentSecurityPolicy.getDefaultDirectives(),
               defaultSrc: [
                 "'self'",
                 "blob:",
