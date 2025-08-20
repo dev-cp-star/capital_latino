@@ -60,7 +60,9 @@ initConnection()
 
     const PORT_APP = process.env.PORT || 3000;
     app.listen(PORT_APP, () => {
-      console.log("Server Running");
+      console.log("╔══════════════════════╗");
+      console.log("║    SERVER RUNNING    ║");
+      console.log("╚══════════════════════╝");
     });
   })
   .catch((err) => {
