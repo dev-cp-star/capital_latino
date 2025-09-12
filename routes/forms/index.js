@@ -20,13 +20,13 @@ router.post('/applyInMinutes', [
   },
 ]);
 
-router.post('/borrowersInfo', [
+router.post('/applyNow', [
   JwtValidation,
-  ...formsChain.borrowersInfo,
+  ...formsChain.applyNow,
   requestValidator,
   async (req, res) => {
     try {
-      await formsService.createBorrowersInfoRegistry(req);
+      await formsService.createApplyNowRegistry(req);
       res.status(200).json({ msg: 'Form successfully sent' });
     } catch (err) {
       res.status(500).json({ msg: 'Unexpected error' });

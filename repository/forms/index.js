@@ -1,8 +1,8 @@
 const connection = require('../../db/connection').getConnection();
 const { models } = connection;
-const { formApplyInMinutes, formBorrowersInfo } = models;
+const { formApplyInMinutes, formApplyNow } = models;
 
 const newFormApplyInMinutes = (data) => new formApplyInMinutes(data).save();
-const newBorrowersInfo = (data) => new formBorrowersInfo(data).save();
+const newApplyNow = (data) => new formApplyNow(data).save();
 
-module.exports = { newFormApplyInMinutes, newBorrowersInfo };
+module.exports = { newFormApplyInMinutes, newApplyNow };

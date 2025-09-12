@@ -7,10 +7,10 @@ const createApplyInMinutesRegistry = (req) =>
     user: { ...req.jwt, _id: new mongoose.Types.ObjectId(req.jwt._id) },
   });
 
-const createBorrowersInfoRegistry = (req) =>
-  formsRepository.newBorrowersInfo({
+const createApplyNowRegistry = (req) =>
+  formsRepository.newApplyNow({
     ...req.body,
     user: { ...req.jwt, _id: new mongoose.Types.ObjectId(req.jwt._id) },
   });
 
-module.exports = { createApplyInMinutesRegistry, createBorrowersInfoRegistry };
+module.exports = { createApplyInMinutesRegistry, createApplyNowRegistry };

@@ -1,4 +1,4 @@
 const applyInMinutes = require('./applyInMinutes');
-const borrowersInfo = require('./borrowersInfo');
+const applyNow = require('./applyNow');
 
-module.exports = { applyInMinutes, borrowersInfo };
+module.exports = { applyInMinutes, applyNow };
