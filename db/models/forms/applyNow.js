@@ -34,6 +34,29 @@ const applyNowSchema = mongoose.Schema(
       cityAndState: String,
       zipCode: String,
     },
+    s4_borrowerBack: {
+      explanation: String,
+      ...Object.fromEntries(Array.from({ length: 7 }, (_, i) => [`p${i + 1}`, Boolean])),
+    },
+    s5_borrowerExp: {
+      propertiesTransacted36m: Number,
+      liquidAssets: Number,
+      hasFlipHoldExperience: Boolean,
+      has12MortgagePayments: Boolean,
+      ownsInvestmentProperties: Boolean,
+      hasProfessionalLicenses: Boolean,
+    },
+    s6_: {}, // **PENDING
+    s7_subjectProperty: {
+      address: String,
+      state: String,
+      zipCode: String,
+      type: String,
+      yearBuilt: Number,
+      numberBuildings: Number,
+      numberUnits: Number,
+      tenantOccupancyRate: Number,
+    },
   },
   { timestamps: true }
 );

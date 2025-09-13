@@ -1,81 +1,44 @@
 const { body } = require('express-validator');
 
+// ******** CHAINS HELPERS ********
+const strNotEmp = ({ baseKey, keys }) =>
+  keys.map((k) =>
+    body(baseKey ? `${baseKey}.${k}` : k)
+      .isString()
+      .notEmpty()
+  );
+
+const strNotEmpOnNestedOpt = ({ baseKey, keys }) =>
+  keys.map((k) => body(`${baseKey}.${k}`).if(body(baseKey).exists()).isString().notEmpty());
+
+const isBool = ({ baseKey, keys }) =>
+  keys.map((k) => body(baseKey ? `${baseKey}.${k}` : k).isBoolean());
+// ******** CHAINS HELPERS ********
+
 const applyInMinutes = [
-  body('loanType')
-    .isString()
-    .withMessage('Loan Type is required')
-    .notEmpty()
-    .withMessage('It can not be empty'),
-  body('currentProcess')
-    .isString()
-    .withMessage('Current Process is required')
-    .notEmpty()
-    .withMessage('It can not be empty'),
-  body('amountLookingFor').isNumeric().withMessage('Amount looking for should be numeric'),
-  body('timeToFunds')
-    .isString()
-    .withMessage('Time to Funds is required')
-    .notEmpty()
-    .withMessage('It can not be empty'),
-  body('leadSource')
-    .isString()
-    .withMessage('Lead source is required')
-    .notEmpty()
-    .withMessage('It can not be empty'),
+  body('amountLookingFor').isNumeric(),
+  ...strNotEmp({ keys: ['loanType', 'currentProcess', 'timeToFunds', 'leadSource'] }),
 ];
 
 // ******** Large Form = Apply Now ********
 
-const s1_applyNow_WhereARYProcess = [
-  body('s1_currentProcess').isArray().withMessage('It should be an Array'),
-];
+const s1_applyNow_WhereARYProcess = [body('s1_currentProcess').isArray()];
 
 const s2_applyNow_borrowersInfo = [
-  body('s2_borrowersInfo.name')
-    .isString()
-    .withMessage('Name is required')
-    .notEmpty()
-    .withMessage('It can not be empty'),
-  body('s2_borrowersInfo.lastName')
-    .isString()
-    .withMessage('Last Name is required')
-    .notEmpty()
-    .withMessage('It can not be empty'),
-  body('s2_borrowersInfo.email')
-    .isString()
-    .withMessage('Email must be text')
-    .isEmail()
-    .withMessage('Invalid Email'),
-  body('s2_borrowersInfo.phoneNumber')
-    .isString()
-    .withMessage('Cell Number is required')
-    .notEmpty()
-    .withMessage('It can not be empty'),
-  body('s2_borrowersInfo.coBorrowerAddress')
-    .isString()
-    .withMessage('Co-Borr-Address is required')
-    .notEmpty()
-    .withMessage('It can not be empty'),
-  body('s2_borrowersInfo.dateBirth')
-    .isISO8601()
-    .withMessage('Invalid date format')
-    .notEmpty()
-    .withMessage('It can not be empty'),
-  body('s2_borrowersInfo.ownOrRent')
-    .isString()
-    .withMessage('Own or rent is required')
-    .notEmpty()
-    .withMessage('It can not be empty'),
-  body('s2_borrowersInfo.maritalStatus')
-    .isString()
-    .withMessage('Marital Status is required')
-    .notEmpty()
-    .withMessage('It can not be empty'),
-  body('s2_borrowersInfo.currentStatus')
-    .isString()
-    .withMessage('Current Status is required')
-    .notEmpty()
-    .withMessage('It can not be empty'),
+  body('s2_borrowersInfo.email').isEmail(),
+  body('s2_borrowersInfo.dateBirth').isISO8601(),
+  ...strNotEmp({
+    baseKey: 's2_borrowersInfo',
+    keys: [
+      'name',
+      'lastName',
+      'phoneNumber',
+      'coBorrowerAddress',
+      'ownOrRent',
+      'maritalStatus',
+      'currentStatus',
+    ],
+  }),
   body('s2_borrowersInfo.coBorrowerAddt')
     .optional()
     .isObject()
@@ -92,95 +55,78 @@ const s2_applyNow_borrowersInfo = [
     .isObject()
     .withMessage('coBorrowerAddt must be an Object')
     .bail(),
-  body('s2_borrowersInfo.coBorrowerAddt.name')
-    .if(body('s2_borrowersInfo.coBorrowerAddt').exists())
-    .isString()
-    .withMessage('Name is required')
-    .notEmpty()
-    .withMessage('It can not be empty'),
-  body('s2_borrowersInfo.coBorrowerAddt.lastName')
-    .if(body('s2_borrowersInfo.coBorrowerAddt').exists())
-    .isString()
-    .withMessage('Last Name is required')
-    .notEmpty()
-    .withMessage('It can not be empty'),
   body('s2_borrowersInfo.coBorrowerAddt.email')
     .if(body('s2_borrowersInfo.coBorrowerAddt').exists())
-    .isString()
-    .withMessage('Email must be text')
-    .isEmail()
-    .withMessage('Invalid Email'),
-  body('s2_borrowersInfo.coBorrowerAddt.phoneNumber')
-    .if(body('s2_borrowersInfo.coBorrowerAddt').exists())
-    .isString()
-    .withMessage('Cell Number is required')
-    .notEmpty()
-    .withMessage('It can not be empty'),
-  body('s2_borrowersInfo.coBorrowerAddt.coBorrowerAddress')
-    .if(body('s2_borrowersInfo.coBorrowerAddt').exists())
-    .isString()
-    .withMessage('Co-Borr-Address is required')
-    .notEmpty()
-    .withMessage('It can not be empty'),
+    .isEmail(),
   body('s2_borrowersInfo.coBorrowerAddt.dateBirth')
     .if(body('s2_borrowersInfo.coBorrowerAddt').exists())
-    .isISO8601()
-    .withMessage('Invalid date format')
-    .notEmpty()
-    .withMessage('It can not be empty'),
-  body('s2_borrowersInfo.coBorrowerAddt.ownOrRent')
-    .if(body('s2_borrowersInfo.coBorrowerAddt').exists())
-    .isString()
-    .withMessage('Own or rent is required')
-    .notEmpty()
-    .withMessage('It can not be empty'),
-  body('s2_borrowersInfo.coBorrowerAddt.maritalStatus')
-    .if(body('s2_borrowersInfo.coBorrowerAddt').exists())
-    .isString()
-    .withMessage('Marital Status is required')
-    .notEmpty()
-    .withMessage('It can not be empty'),
-  body('s2_borrowersInfo.coBorrowerAddt.currentStatus')
-    .if(body('s2_borrowersInfo.coBorrowerAddt').exists())
-    .isString()
-    .withMessage('Current Status is required')
-    .notEmpty()
-    .withMessage('It can not be empty'),
+    .isISO8601(),
+  ...strNotEmpOnNestedOpt({
+    baseKey: 's2_borrowersInfo.coBorrowerAddt',
+    keys: [
+      'name',
+      'lastName',
+      'phoneNumber',
+      'coBorrowerAddress',
+      'ownOrRent',
+      'maritalStatus',
+      'currentStatus',
+    ],
+  }),
 ];
 
 const s3_applyNow_borrowerType = [
-  body('s3_borrowerType.nameSelect').isArray().withMessage('It should be an Array'),
-  body('s3_borrowerType.name')
-    .isString()
-    .withMessage('Name is required')
-    .notEmpty()
-    .withMessage('It can not be empty'),
-  body('s3_borrowerType.structure')
-    .isString()
-    .withMessage('Company Structure is required')
-    .notEmpty()
-    .withMessage('It can not be empty'),
-  body('s3_borrowerType.address')
-    .isString()
-    .withMessage('Company Address is required')
-    .notEmpty()
-    .withMessage('It can not be empty'),
-  body('s3_borrowerType.cityAndState')
-    .isString()
-    .withMessage('City and state is required')
-    .notEmpty()
-    .withMessage('It can not be empty'),
-  body('s3_borrowerType.zipCode')
-    .isString()
-    .withMessage('Company ZipCode is required')
-    .notEmpty()
-    .withMessage('It can not be empty'),
+  body('s3_borrowerType.nameSelect').isArray(),
+  ...strNotEmp({
+    baseKey: 's3_borrowerType',
+    keys: ['name', 'structure', 'address', 'cityAndState', 'zipCode'],
+  }),
+];
+
+const s4_applyNow_borrowerBackground = [
+  body('s4_borrowerBack.explanation').optional().isString(),
+  ...isBool({
+    baseKey: 's4_borrowerBack',
+    keys: Array.from({ length: 7 }, (_, i) => `p${i + 1}`),
+  }),
+];
+
+const s5_applyNow_borrowerExperience = [
+  body('s5_borrowerExp.propertiesTransacted36m').isNumeric(),
+  body('s5_borrowerExp.liquidAssets').isNumeric(),
+  ...isBool({
+    baseKey: 's5_borrowerExp',
+    keys: [
+      'hasFlipHoldExperience',
+      'has12MortgagePayments',
+      'ownsInvestmentProperties',
+      'hasProfessionalLicenses',
+    ],
+  }),
+];
+
+const s6_ = []; // **PENDING
+
+const s7_applyNow_subjectProperty = [
+  body('s7_subjectProperty.yearBuilt').isNumeric().isLength({ min: 4, max: 4 }),
+  body([
+    's7_subjectProperty.numberBuildings',
+    's7_subjectProperty.numberUnits',
+    's7_subjectProperty.tenantOccupancyRate',
+  ])
+    .optional()
+    .isNumeric(),
+  ...strNotEmp({ baseKey: 's7_subjectProperty', keys: ['address', 'state', 'zipCode', 'type'] }),
 ];
 
 const applyNow = [
   ...s1_applyNow_WhereARYProcess,
   ...s2_applyNow_borrowersInfo,
   ...s3_applyNow_borrowerType,
+  ...s4_applyNow_borrowerBackground,
+  ...s5_applyNow_borrowerExperience,
+  ...s6_, // **PENDING
+  ...s7_applyNow_subjectProperty,
 ];
 
 module.exports = { applyInMinutes, applyNow };
