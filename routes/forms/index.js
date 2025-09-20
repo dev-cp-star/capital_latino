@@ -29,6 +29,7 @@ router.post('/applyNow', [
       await formsService.createApplyNowRegistry(req);
       res.status(200).json({ msg: 'Form successfully sent' });
     } catch (err) {
+      console.log(err);
       res.status(500).json({ msg: 'Unexpected error' });
     }
   },
