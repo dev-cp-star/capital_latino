@@ -13,6 +13,12 @@ const strNotEmpOnNestedOpt = ({ baseKey, keys }) =>
 
 const isBool = ({ baseKey, keys }) =>
   keys.map((k) => body(baseKey ? `${baseKey}.${k}` : k).isBoolean());
+
+const isNumeric = ({ baseKey, keys }) =>
+  keys.map((k) => body(baseKey ? `${baseKey}.${k}` : k).isNumeric());
+
+const isNumericOpt = ({ baseKey, keys }) =>
+  keys.map((k) => body(`${baseKey}.${k}`).optional().isNumeric());
 // ******** CHAINS HELPERS ********
 
 const applyInMinutes = [
@@ -109,15 +115,29 @@ const s6_ = []; // **PENDING
 
 const s7_applyNow_subjectProperty = [
   body('s7_subjectProperty.yearBuilt').isNumeric().isLength({ min: 4, max: 4 }),
-  body([
-    's7_subjectProperty.numberBuildings',
-    's7_subjectProperty.numberUnits',
-    's7_subjectProperty.tenantOccupancyRate',
-  ])
-    .optional()
-    .isNumeric(),
+  ...isNumericOpt({
+    baseKey: 's7_subjectProperty',
+    keys: ['numberBuildings', 'numberUnits', 'tenantOccupancyRate'],
+  }),
   ...strNotEmp({ baseKey: 's7_subjectProperty', keys: ['address', 'state', 'zipCode', 'type'] }),
 ];
+
+const s8_applyNow_propertyDetails = [
+  body('s8_propertyDetails.pricePerDoor').optional().isNumeric(),
+  ...isNumeric({
+    baseKey: 's8_propertyDetails',
+    keys: [
+      'annualPropertyTaxes',
+      'correctOccupancy',
+      'annualInsurance',
+      'currentRentalIncome',
+      'rehabDurationMonths',
+    ],
+  }),
+  body('s8_propertyDetails.occupancyNotes').isString(),
+];
+
+const s9_applyNow_leadSource = [body('s9_leadSource').isArray()];
 
 const applyNow = [
   ...s1_applyNow_WhereARYProcess,
@@ -127,6 +147,8 @@ const applyNow = [
   ...s5_applyNow_borrowerExperience,
   ...s6_, // **PENDING
   ...s7_applyNow_subjectProperty,
+  ...s8_applyNow_propertyDetails,
+  ...s9_applyNow_leadSource,
 ];
 
 module.exports = { applyInMinutes, applyNow };

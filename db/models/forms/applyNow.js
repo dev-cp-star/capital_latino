@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const applyNowSchema = mongoose.Schema(
   {
     user: {},
-    s1_currentProcess: [String],
+    s1_currentProcess: [],
     s2_borrowersInfo: {
       name: String,
       lastName: String,
@@ -36,7 +36,13 @@ const applyNowSchema = mongoose.Schema(
     },
     s4_borrowerBack: {
       explanation: String,
-      ...Object.fromEntries(Array.from({ length: 7 }, (_, i) => [`p${i + 1}`, Boolean])),
+      p1: Boolean,
+      p2: Boolean,
+      p3: Boolean,
+      p4: Boolean,
+      p5: Boolean,
+      p6: Boolean,
+      p7: Boolean,
     },
     s5_borrowerExp: {
       propertiesTransacted36m: Number,
@@ -57,6 +63,16 @@ const applyNowSchema = mongoose.Schema(
       numberUnits: Number,
       tenantOccupancyRate: Number,
     },
+    s8_propertyDetails: {
+      pricePerDoor: Number,
+      annualPropertyTaxes: Number,
+      correctOccupancy: Number,
+      annualInsurance: Number,
+      occupancyNotes: String,
+      currentRentalIncome: Number,
+      rehabDurationMonths: Number,
+    },
+    s9_leadSource: [],
   },
   { timestamps: true }
 );
