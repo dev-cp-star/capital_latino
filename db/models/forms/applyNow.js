@@ -27,7 +27,7 @@ const applyNowSchema = mongoose.Schema(
       },
     },
     s3_borrowerType: {
-      nameSelect: [String],
+      nameSelect: [],
       name: String,
       structure: String,
       address: String,
